@@ -62,15 +62,12 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      outline: none;
-      -webkit-tap-highlight-color: transparent;
     }
 
     body {
       font-family: var(--font-family);
       background: transparent;
       color: var(--text-primary);
-      width: 100%;
       padding: 6px 10px 0;
       display: flex;
       justify-content: center;
@@ -81,7 +78,6 @@
     }
 
     .options-wrapper {
-      width: 100%;
       max-width: 600px;
       margin: 0 auto;
       transition: all var(--duration-base) var(--ease-smooth);
@@ -420,11 +416,13 @@
       const wrapper = document.getElementById('options-wrapper');
       wrapper.classList.add('force-redraw');
       requestAnimationFrame(() => wrapper.classList.remove('force-redraw'));
+      document.body.style.visibility = 'hidden';
+      void document.body.offsetHeight;
+      document.body.style.visibility = '';
     }
 
     function triggerAction(text) {
       if (typeof triggerSlash !== 'function') {
-        console.log('Action triggered:', text);
         showToast('环境不支持');
         return;
       }
@@ -444,7 +442,7 @@
         triggerSlash(`/setinput ${newInput}`);
       }
 
-      showToast(MODES[currentMode].desc + ': ' + text.slice(0, 10) + '...');
+      showToast(MODES[currentMode].desc + ': ' + text.slice(0, 10) + (text.length > 10 ? '...' : ''));
     }
 
     function createOptions(optionsString) {
