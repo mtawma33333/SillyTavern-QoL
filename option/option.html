@@ -23,7 +23,7 @@
     }
 
     [data-theme='day'] {
-        --color-primary: oklch(0.5677 0.2038 33.32); /* 保持一致 */
+        --color-primary: oklch(0.5677 0.2038 33.32);
         --bg-page:       oklch(0.98 0 0);
         --bg-tray:       oklch(0.95 0 0);
         --bg-card:       oklch(1 0 0);
@@ -69,18 +69,17 @@
       background: transparent;
       color: var(--text-primary);
       padding: 6px 10px 0;
-      display: flex;
-      justify-content: center;
+      display: block; 
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       text-rendering: auto;
-
+      overflow-x: hidden;
     }
 
     .options-wrapper {
       max-width: 600px;
       margin: 0 auto;
-      transition: all var(--duration-base) var(--ease-smooth);
+      transition: opacity var(--duration-base) var(--ease-smooth);
     }
 
     /* Tray Container */
@@ -97,20 +96,25 @@
         max-height var(--duration-base) var(--ease-smooth),
         opacity var(--duration-fast) var(--ease-smooth),
         transform var(--duration-fast) var(--ease-smooth),
-        padding var(--duration-fast);
+        padding var(--duration-fast),
+        margin var(--duration-fast);
       overflow: hidden;
       opacity: 1;
       transform: translateY(0);
       max-height: 800px;
+      margin-top: 0;
     }
 
     .options-wrapper.collapsed .options-container {
       max-height: 0;
       opacity: 0;
-      padding: 0 12px;
+      padding-top: 0;
+      padding-bottom: 0;
+      border: 0 solid transparent; 
       transform: translateY(-8px);
       pointer-events: none;
-      border-color: transparent;
+      margin-top: 0;
+      margin-bottom: 0;
     }
 
     /* Header & Controls */
@@ -119,6 +123,7 @@
       justify-content: space-between;
       align-items: center;
       padding: 4px 8px;
+      flex-shrink: 0;
     }
 
     .options-title {
@@ -175,6 +180,7 @@
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 10px;
+      width: 100%;
     }
 
     @media (max-width: 400px) {
@@ -198,6 +204,7 @@
         box-shadow var(--duration-fast) var(--ease-smooth),
         border-color var(--duration-fast);
       animation: fadeInUp 0.4s var(--ease-smooth) both;
+      word-break: break-word;
     }
 
     .option-card:nth-child(1) { animation-delay: 0.05s; }
