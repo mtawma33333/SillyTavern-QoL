@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* Design System */
+    :root {
+        --duration-fast: 0.3s;
+        --duration-base: 0.4s;
+        --ease-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        --ease-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
+        --lift-hover: -2px;
+        
+        --radius-tray: 24px;
+        --radius-card: 16px;
+        --radius-btn: 12px;
+        --radius-full: 9999px;
+
+        --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    [data-theme='day'] {
+        --color-primary: oklch(0.5677 0.2038 33.32); /* 保持一致 */
+        --bg-page:       oklch(0.98 0 0);
+        --bg-tray:       oklch(0.95 0 0);
+        --bg-card:       oklch(1 0 0);
+        --bg-card-hover: oklch(0.99 0 0);
+        --bg-btn:        oklch(0.96 0 0);
+        
+        --text-primary:  oklch(0.2 0 0);
+        --text-muted:    oklch(0.5 0 0);
+        --border-color:  rgba(0,0,0,0.06);
+
+        --shadow-s: 0 1px 2px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.05);
+        --shadow-m: 0 4px 6px rgba(0,0,0,0.06), 0 8px 12px rgba(0,0,0,0.06);
+        --shadow-inner: inset 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    [data-theme='night'] {
+        --color-primary: oklch(0.5677 0.2038 33.32);
+        
+        --bg-page:       oklch(0.1 0 264);
+        --bg-tray:       oklch(0.2 0 264);
+        --bg-card:       oklch(0.3 0 264);
+        --bg-card-hover: oklch(0.35 0 264);
+        --bg-btn:        oklch(0.25 0 264);
+
+        --text-primary:  oklch(0.96 0 264);
+        --text-muted:    oklch(0.76 0 264);
+        --border-color:  rgba(255,255,255,0.05);
+
+        --shadow-s: inset 0 1px 2px #ffffff10, 0 1px 2px #00000030, 0 2px 4px #00000015;
+        --shadow-m: inset 0 1px 2px #ffffff20, 0 2px 4px #00000030, 0 4px 8px #00000015;
+        --shadow-inner: inset 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    /* Base & Layout */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      outline: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background: transparent;
+      color: var(--text-primary);
+      width: 100%;
+      padding: 6px 10px 0;
+      display: flex;
+      justify-content: center;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: auto;
+
+    }
+
+    .options-wrapper {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      transition: all var(--duration-base) var(--ease-smooth);
+    }
+
+    /* Tray Container */
+    .options-container {
+      background-color: var(--bg-tray);
+      border-radius: var(--radius-tray);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: var(--shadow-inner);
+      border: 1px solid var(--border-color);
+      transition: 
+        max-height var(--duration-base) var(--ease-smooth),
+        opacity var(--duration-fast) var(--ease-smooth),
+        transform var(--duration-fast) var(--ease-smooth),
+        padding var(--duration-fast);
+      overflow: hidden;
+      opacity: 1;
+      transform: translateY(0);
+      max-height: 800px;
+    }
+
+    .options-wrapper.collapsed .options-container {
+      max-height: 0;
+      opacity: 0;
+      padding: 0 12px;
+      transform: translateY(-8px);
+      pointer-events: none;
+      border-color: transparent;
+    }
+
+    /* Header & Controls */
+    .options-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 8px;
+    }
+
+    .options-title {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .header-controls {
+      display: flex;
+      gap: 8px;
+    }
+
+    .ctrl-btn {
+      background-color: var(--bg-card);
+      border: none;
+      border-radius: var(--radius-btn);
+      color: var(--text-muted);
+      height: 32px;
+      min-width: 32px;
+      padding: 0 10px;
+      font-family: var(--font-family);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--duration-fast) var(--ease-smooth);
+      box-shadow: var(--shadow-s);
+    }
+
+    .ctrl-btn:hover {
+      background-color: var(--bg-card-hover);
+      color: var(--text-primary);
+      transform: translateY(-1px);
+    }
+
+    .mode-btn.active {
+      background-color: var(--color-primary);
+      color: #fff;
+      box-shadow: 0 2px 8px var(--color-primary);
+    }
+
+    .fold-icon {
+      font-size: 10px;
+      transition: transform var(--duration-base) var(--ease-elastic);
+    }
+    
+    /* Cards Grid */
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    @media (max-width: 400px) {
+      .options-grid { grid-template-columns: 1fr; }
+    }
+
+    .option-card {
+      background-color: var(--bg-card);
+      border-radius: var(--radius-card);
+      padding: 16px;
+      font-size: 14px;
+      color: var(--text-primary);
+      box-shadow: var(--shadow-s);
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+      border: 1px solid transparent;
+      transition: 
+        transform var(--duration-fast) var(--ease-elastic),
+        background-color var(--duration-fast) var(--ease-smooth),
+        box-shadow var(--duration-fast) var(--ease-smooth),
+        border-color var(--duration-fast);
+      animation: fadeInUp 0.4s var(--ease-smooth) both;
+    }
+
+    .option-card:nth-child(1) { animation-delay: 0.05s; }
+    .option-card:nth-child(2) { animation-delay: 0.1s; }
+    .option-card:nth-child(3) { animation-delay: 0.15s; }
+    .option-card:nth-child(4) { animation-delay: 0.2s; }
+    .option-card:nth-child(5) { animation-delay: 0.25s; }
+
+    .option-card:hover {
+      transform: translateY(var(--lift-hover));
+      background-color: var(--bg-card-hover);
+      box-shadow: var(--shadow-m);
+      z-index: 2;
+    }
+
+    .option-card:active {
+      transform: scale(0.98);
+    }
+
+    /* Collapsed Toggle */
+    .collapsed-toggle {
+      display: none;
+      width: fit-content;
+      margin: 0 auto;
+      padding: 10px 24px;
+      background-color: var(--bg-card);
+      color: var(--text-primary);
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-m);
+      cursor: pointer;
+      border: 1px solid var(--border-color);
+      transition: all var(--duration-fast) var(--ease-smooth);
+    }
+
+    .collapsed-toggle:hover {
+      transform: translateY(-2px);
+      color: var(--color-primary);
+    }
+
+    .options-wrapper.collapsed .collapsed-toggle {
+      display: block;
+      animation: popIn 0.35s var(--ease-elastic);
+    }
+
+    /* Utilities & Animations */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      padding: 10px 20px;
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-m);
+      border-radius: var(--radius-full);
+      font-size: 13px;
+      font-weight: 500;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s var(--ease-smooth);
+      z-index: 100;
+      white-space: nowrap;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .force-redraw { opacity: 0.999; }
+  </style>
+</head>
+<body>
+  <div id="options-wrapper" class="options-wrapper" data-theme="night">
+    <div class="collapsed-toggle" onclick="toggleCollapse()">Actions</div>
+    <div class="options-container">
+      <div class="options-header">
+        <div class="options-title">Actions</div>
+        <div class="header-controls">
+          <button type="button" class="ctrl-btn mode-btn" id="modeBtn" onclick="cycleMode()">Send</button>
+          <button type="button" class="ctrl-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
+          <button type="button" class="ctrl-btn" onclick="toggleCollapse()">
+            <span class="fold-icon">✕</span>
+          </button>
+        </div>
+      </div>
+      <div class="options-grid" id="optionsGrid">
+        <!-- JS will populate cards here -->
+      </div>
+    </div>
+    <div class="toast" id="toast"></div>
+  </div>
+  <script>
+    const THEME_KEY = 'son-wife-status-theme';
+    const MODE_KEY = 'son-wife-options-mode';
+    const COLLAPSED_KEY = 'son-wife-options-collapsed';
+
+    const MODES = [
+      { id: 'send', label: '发送', desc: '直接发送' },
+      { id: 'input', label: '输入', desc: '填充输入框' },
+      { id: 'append', label: '追加', desc: '追加到输入框' }
+    ];
+
+    let currentMode = 0;
+    let isCollapsed = false;
+
+    function getOptionsData() {
+        try {
+            const chat_message = getChatMessages(getCurrentMessageId())[0];
+            const match = chat_message.message.match(/<options>([\s\S]*?)<\/options>/);
+            return match ? match[1] : '';
+        } catch (e) {
+            // 测试用模拟数据
+            return "getOptionsData() Error|can not get OptionData|getOptionsData() 错误|无法抓取 OptionsData |";
+        }
+    }
+    const optionsData = getOptionsData();
+
+    function initTheme() {
+      let saved = localStorage.getItem(THEME_KEY);
+      if (!saved) saved = 'night'; 
+      
+      const wrapper = document.getElementById('options-wrapper');
+      const btn = document.getElementById('themeBtn');
+      
+      applyTheme(saved);
+    }
+
+    function toggleTheme() {
+      const wrapper = document.getElementById('options-wrapper');
+      const current = wrapper.getAttribute('data-theme');
+      const next = current === 'night' ? 'day' : 'night';
+      applyTheme(next);
+      localStorage.setItem(THEME_KEY, next);
+    }
+
+    function applyTheme(theme) {
+      const wrapper = document.getElementById('options-wrapper');
+      const btn = document.getElementById('themeBtn');
+      wrapper.setAttribute('data-theme', theme);
+      btn.textContent = theme === 'night' ? '🌙' : '☀️';
+    }
+
+    window.addEventListener('storage', function(e) {
+      if (e.key === THEME_KEY && e.newValue) {
+        applyTheme(e.newValue);
+      }
+    });
+
+    function initMode() {
+      const saved = localStorage.getItem(MODE_KEY);
+      if (saved !== null) {
+        const idx = parseInt(saved, 10);
+        if (idx >= 0 && idx < MODES.length) {
+          currentMode = idx;
+        }
+      }
+      updateModeBtn();
+    }
+
+    function cycleMode() {
+      currentMode = (currentMode + 1) % MODES.length;
+      localStorage.setItem(MODE_KEY, currentMode.toString());
+      updateModeBtn();
+      showToast(MODES[currentMode].desc);
+    }
+
+    function updateModeBtn() {
+      const btn = document.getElementById('modeBtn');
+      btn.textContent = MODES[currentMode].label;
+      btn.classList.toggle('active', currentMode === 0);
+      btn.classList.add('active'); 
+      if (currentMode !== 0) btn.classList.remove('active');
+    }
+
+    function initCollapsed() {
+      const saved = localStorage.getItem(COLLAPSED_KEY);
+      isCollapsed = saved === 'true';
+      document.getElementById('options-wrapper').classList.toggle('collapsed', isCollapsed);
+    }
+
+    function toggleCollapse() {
+      isCollapsed = !isCollapsed;
+      document.getElementById('options-wrapper').classList.toggle('collapsed', isCollapsed);
+      localStorage.setItem(COLLAPSED_KEY, isCollapsed ? 'true' : 'false');
+    }
+
+    function collapseOptions() {
+      isCollapsed = true;
+      document.getElementById('options-wrapper').classList.add('collapsed');
+      localStorage.setItem(COLLAPSED_KEY, 'true');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      if (toast.timer) clearTimeout(toast.timer);
+      toast.timer = setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    function forceTextRedraw() {
+      const wrapper = document.getElementById('options-wrapper');
+      wrapper.classList.add('force-redraw');
+      requestAnimationFrame(() => wrapper.classList.remove('force-redraw'));
+    }
+
+    function triggerAction(text) {
+      if (typeof triggerSlash !== 'function') {
+        console.log('Action triggered:', text);
+        showToast('环境不支持');
+        return;
+      }
+
+      const mode = MODES[currentMode].id;
+
+      if (mode === 'send') {
+        triggerSlash(`/send ${text}|/trigger`);
+        collapseOptions();
+      } else if (mode === 'input') {
+        triggerSlash(`/setinput ${text}`);
+        collapseOptions();
+      } else if (mode === 'append') {
+        const $ = window.parent.$;
+        const currentInput = $('#send_textarea').val() || '';
+        const newInput = currentInput ? `${currentInput}\n${text}` : text;
+        triggerSlash(`/setinput ${newInput}`);
+      }
+
+      showToast(MODES[currentMode].desc + ': ' + text.slice(0, 10) + '...');
+    }
+
+    function createOptions(optionsString) {
+      const grid = document.getElementById('optionsGrid');
+      grid.innerHTML = '';
+
+      const options = optionsString
+        .split('|')
+        .map(opt => opt.trim())
+        .filter(opt => opt.length > 0);
+
+      if (options.length === 0) {
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:20px;font-size:12px;">No options available</div>';
+        return;
+      }
+
+      options.forEach((option) => {
+        const card = document.createElement('div');
+        card.className = 'option-card';
+        card.textContent = option;
+        card.onclick = () => triggerAction(option);
+        grid.appendChild(card);
+      });
+    }
+
+    setTimeout(function() {
+      initTheme();
+      initMode();
+      initCollapsed();
+      createOptions(optionsData);
+      forceTextRedraw();
+    }, 0);
+  </script>
+</body>
+</html>
